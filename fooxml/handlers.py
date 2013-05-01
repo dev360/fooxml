@@ -93,8 +93,8 @@ class SimpleHandler(BaseHandler):
     >>> def callback(person):
     ...     persons.append(person)
     >>> handler = SimpleHandler("Persons/Person", callback=callback)
-    >>> xml_file = xmlfoo.xml_open("persons.xml", handler)
-    >>> xml_file.process()
+    >>> xml_file = xmlfoo.xml_file("persons.xml", handler)
+    >>> xml_file.parse()
     >>> persons[0]["@id"]
     123
     >>> persons[0]["FirstName"]
