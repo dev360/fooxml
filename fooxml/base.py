@@ -25,7 +25,7 @@ def xml_file(*args, **kwargs):
     """
     Usage:
     >>> import fooxml
-    >>> handler = BasicHandler("")
+    >>> handler = SimpleHandler("")
     >>> xml_file = fooxml.xml_file(open('samples/.xml'), handlers=[fooxml])
     >>>
     """
