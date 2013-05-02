@@ -3,14 +3,14 @@ from xml.sax.handler import ContentHandler
 class BaseHandler(ContentHandler):
     """
     The BaseHandler accumulates xml attributes into
-    an object and wraps lxml. The foo in fooxml.
+    an object and wraps the sax parser. The foo in fooxml.
     """
     def __init__(self, element, **kwargs):
         # _value is the current value
         # _obj is the currently accumulated obj
         # _nodes is the hierarchy of nodes
         # _callback is the callback for when an element finishes
-        self._value = None
+        self._values = []
         self._accumulator = {}
         self._nodes = []
         self._callback = kwargs.get('callback', None)
@@ -32,18 +32,14 @@ class BaseHandler(ContentHandler):
         # Set key to none if you are at the root element
         #
         self._nodes.append(name)
-
         self._accumulator[name] = {}
+        self._values = []
 
         for attr in [a for a in attrs.keys()]:
             self._accumulator[name]['@{0}'.format(attr)] = attrs.get(attr)
 
     def characters(self, data):
-
-        if self._stripchars:
-            self._value = data.strip()
-        else:
-            self._value = data
+        self._values.append(data)
 
     def endElement(self, name):
         # The element has come to an end, lets
@@ -61,10 +57,10 @@ class BaseHandler(ContentHandler):
         is_needed = len(elements & nodes) >= 1
 
         if is_needed:
-            self._accumulator[parent][name] = self._value
+            self._accumulator[parent][name] = ''.join(self._values)
 
         if name in self._elements:
-            self._accumulator[name]["value"] = self._value
+            self._accumulator[name]["value"] = ''.join(self._values)
 
         if name in self._elements:
             if self._callback:
