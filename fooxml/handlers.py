@@ -7,18 +7,79 @@ class LXMLHandler(object):
     The LXMLHandler uses the lxml.etree.iterparse
     strategy to parse xml
     """
+    def __init__(self, element, **kwargs):
+        self._element = element
+        self._base_key = None
+        self._accumulator = {}
+        self._callback = kwargs.get('callback', None)
+        self._nodes = []
+
+    @property
+    def current_key(self):
+        return '/'.join(self._nodes)
+
     def iter(self, event, element):
         """
         Iterates over the etree
         """
-        pass
+        if event == 'start':
+            self._nodes.append(element.tag)
+
+        if self.is_start(event, element):
+            if self._base_key == None:
+                self._base_key == self.current_key
+
+            self._accumulator = {}
+
+        if event == 'start':
+            self._accumulator[self.current_key] = element.value
+
+            for attr in element.attrib:
+                self._accumulator[self.current_key + "@" + attr] = element.attrib[attr]
+
+        if self.is_end(event, element):
+            if self._callback:
+                self._callback(self.obj)
+
+        if event == 'end':
+            self._nodes.pop()
+
+    @property
+    def obj(self):
+        """
+        Builds out the object
+        """
+        obj = {}
+        for key in self._accumulator:
+            if key.starts_with(self._base_key):
+                attr = key[len(self._base_key)+1:]
+
+                # Only pick the first level attributes
+                # for right now
+                if '/' not in attr:
+                    obj[attr] = self._accumulator[key]
+
+        return obj
+
+    def is_start(self, event, element):
+        """
+        Determines if this is the start of element
+        """
+        return event == 'start' and element == self._element
+
+    def is_end(self, event, element):
+        """
+        Determines if this is the end of element
+        """
+        return event == 'end' and element == self._element
 
     def parse(self, stream):
         """
         Parse implementation
         """
-        pass
-
+        from lxml import etree
+        for e, el in etree.iterparse(stream, events=('start', 'end')):
+            self.iter(e, el)
 
 
 class SaxHandler(ContentHandler):

@@ -4,9 +4,9 @@ import unittest
 import fooxml
 
 
-class XmlOpenTest(unittest.TestCase):
+class SaxHandlerTest(unittest.TestCase):
 
-    def test_process(self):
+    def test_parse(self):
         """ Testing the routes """
 
         objs = []
@@ -14,7 +14,7 @@ class XmlOpenTest(unittest.TestCase):
         def callback(obj):
             objs.append(obj)
 
-        handler = fooxml.SimpleHandler("AttributeLink", callback=callback)
+        handler = fooxml.SaxHandler("AttributeLink", callback=callback)
         xml_file = fooxml.xml_file("../samples/SampleAttributeLink.xml", handler)
         xml_file.parse()
 
@@ -58,11 +58,10 @@ class XmlOpenTest(unittest.TestCase):
         stream.seek(0)
 
         objs = []
-
         def callback(obj):
             objs.append(obj)
 
-        handler = fooxml.SimpleHandler("food", callback=callback)
+        handler = fooxml.SaxHandler("food", callback=callback)
         xml_file = fooxml.xml_file(stream, handler)
         xml_file.parse()
 
