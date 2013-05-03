@@ -27,12 +27,12 @@ class LXMLHandler(object):
 
         if self.is_start(event, element):
             if self._base_key == None:
-                self._base_key == self.current_key
+                self._base_key = self.current_key
 
             self._accumulator = {}
 
         if event == 'start':
-            self._accumulator[self.current_key] = element.value
+            self._accumulator[self.current_key] = element.text
 
             for attr in element.attrib:
                 self._accumulator[self.current_key + "@" + attr] = element.attrib[attr]
@@ -51,7 +51,7 @@ class LXMLHandler(object):
         """
         obj = {}
         for key in self._accumulator:
-            if key.starts_with(self._base_key):
+            if self._base_key and key.startswith(self._base_key):
                 attr = key[len(self._base_key)+1:]
 
                 # Only pick the first level attributes
@@ -59,19 +59,20 @@ class LXMLHandler(object):
                 if '/' not in attr:
                     obj[attr] = self._accumulator[key]
 
+        # print self._accumulator
         return obj
 
     def is_start(self, event, element):
         """
         Determines if this is the start of element
         """
-        return event == 'start' and element == self._element
+        return event == 'start' and element.tag == self._element
 
     def is_end(self, event, element):
         """
         Determines if this is the end of element
         """
-        return event == 'end' and element == self._element
+        return event == 'end' and element.tag == self._element
 
     def parse(self, stream):
         """
