@@ -1,3 +1,3 @@
 from base import xml_file
-from handlers import BaseHandler, SimpleHandler
+from handlers import SaxHandler, SimpleHandler
 

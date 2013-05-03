@@ -1,6 +1,27 @@
+from xml.sax import make_parser
 from xml.sax.handler import ContentHandler
 
-class BaseHandler(ContentHandler):
+
+class LXMLHandler(object):
+    """
+    The LXMLHandler uses the lxml.etree.iterparse
+    strategy to parse xml
+    """
+    def iter(self, event, element):
+        """
+        Iterates over the etree
+        """
+        pass
+
+    def parse(self, stream):
+        """
+        Parse implementation
+        """
+        pass
+
+
+
+class SaxHandler(ContentHandler):
     """
     The BaseHandler accumulates xml attributes into
     an object and wraps the sax parser. The foo in fooxml.
@@ -68,8 +89,17 @@ class BaseHandler(ContentHandler):
 
         self._nodes.pop()
 
+    def parse(self, stream):
+        """
+        Parses the actual file
+        """
+        parser = make_parser()
+        parser.setContentHandler(self)
+        parser.parse(stream)
 
-class SimpleHandler(BaseHandler):
+
+
+class SimpleHandler(SaxHandler):
     """
     Simple handler accumulates all the data of an element into
     a simple dict. Its ideal when you don't care to control
@@ -99,3 +129,6 @@ class SimpleHandler(BaseHandler):
     Toivola
     """
     pass
+
+
+

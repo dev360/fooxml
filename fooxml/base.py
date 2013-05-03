@@ -1,8 +1,7 @@
-from xml.sax import make_parser
 
 class XmlFile(object):
     """
-    XML File object
+    XML File object.. not really a file. sorry :)
     """
     def __init__(self, *args, **kwargs):
         """
@@ -15,9 +14,7 @@ class XmlFile(object):
         """
         Processes the file
         """
-        parser = make_parser()
-        parser.setContentHandler(self._handler)
-        parser.parse(self._stream)
+        self._handler.parse(self._stream)
 
 
 
